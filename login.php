@@ -1,4 +1,5 @@
 <?php
+session_start();
 include("conn.php");
 
 if (isset($_POST['submit'])) {
@@ -21,13 +22,12 @@ if (isset($_POST['submit'])) {
 
         // Verify password
         if (password_verify($password, $hashedPwd)) {
-            // Start session and set session variables
-            session_start();
+            // Set session variables
             $_SESSION['matric'] = $row['matric'];
             $_SESSION['name'] = $row['name'];
             $_SESSION['role'] = $row['role'];
 
-            // Redirect to a protected page (e.g., dashboard)
+            // Redirect to user page
             header('Location: user.php');
             exit();
         } else {

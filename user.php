@@ -1,19 +1,26 @@
 <?php
+session_start();
 include "conn.php";
-//if($db){ echo "connection success";}
+
+// Check if the user is logged in
+if (!isset($_SESSION['matric'])) {
+    header('Location: login.php');
+    exit();
+}
+
 $sql = "SELECT * FROM users";    
 $result = $conn->query($sql);
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <style>    
         table {
             font-family: arial, sans-serif;
             border-collapse: collapse;
             width: 50%;
+            margin: auto; /* Center the table */
         }
         th{
             border: 1px solid #dddddd;
@@ -32,10 +39,9 @@ $result = $conn->query($sql);
 </head>
 <body>
      <h1 style="text-align: center;"><b>LIST OF USER</b></h1>
-     <table style="margin-left: auto; margin-right: auto;">
+     <table>
      <?php
      if ($result->num_rows > 0) {
-        //echo '<table>';
         echo '<thead>';
         echo '<tr>';
         echo '<th scope="col"><b>ID</b></th>';
@@ -49,26 +55,25 @@ $result = $conn->query($sql);
         // Fetch the results and display them
         while($row = $result->fetch_assoc()) {
             echo '<tr>';
-            echo '<td>' . $row['matric'] . '</td>';
-            echo '<td>' . $row['name'] . '</td>';
-            echo '<td>' . $row['role'] . '</td>';
-            echo '<td><a href="updateUser.php?matric=' . $row['matric'] . '" class="btn btn-primary">Update</a></td>';
-            echo '<td><a href="deleteUser.php?matric=' . $row['matric'] . '" class="btn btn-danger">Delete</a></td>';
+            echo '<td>' . htmlspecialchars($row['matric']) . '</td>';
+            echo '<td>' . htmlspecialchars($row['name']) . '</td>';
+            echo '<td>' . htmlspecialchars($row['role']) . '</td>';
+            echo '<td><a href="updateUser.php?matric=' . htmlspecialchars($row['matric']) . '" class="btn btn-primary">Update</a></td>';
+            echo '<td><a href="deleteUser.php?matric=' . htmlspecialchars($row['matric']) . '" class="btn btn-danger">Delete</a></td>';
             echo '</tr>';
         }
         
         echo '</tbody>';
-        //echo '</table>';
     } else {
         echo "No records found";
     }
-$conn->close();
-?>
-</table><br><br>
-<div class="button-container">
-    <button type="button" onclick="window.location.href='login.php'">
-        Logout
-    </button>
-</div>
+    $conn->close();
+    ?>
+    </table><br><br>
+    <div class="button-container">
+        <form action="logout.php" method="post">
+            <button type="submit" name="logout">Logout</button>
+        </form>
+    </div>
 </body>
 </html>
